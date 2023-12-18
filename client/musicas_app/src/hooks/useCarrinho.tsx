@@ -25,6 +25,9 @@ export const useCarrinho = create<Carrinho>((set, get) => ({
 
 
 const adicionaItem = async (itemId: number) => {
+
+    
+
     return {
         itens: [],
         valorTotal: 0

@@ -1,5 +1,6 @@
 package com.musicas.musicasapi.Authentication.Models.Entities;
 
+import com.musicas.musicasapi.Application.Entity.Pagamento.Carrinho;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -26,6 +27,10 @@ public class User implements UserDetails {
 
     @Column
     private UserRole role;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "carrinho_id", referencedColumnName = "id")
+    private Carrinho carrinho;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

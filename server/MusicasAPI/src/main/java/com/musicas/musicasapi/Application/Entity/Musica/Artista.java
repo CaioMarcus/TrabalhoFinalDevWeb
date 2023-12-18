@@ -7,13 +7,12 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "Artistas")
+@Table
 public class Artista {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
 
     private String nome;
 

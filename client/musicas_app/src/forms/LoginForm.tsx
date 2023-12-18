@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import {zodResolver} from '@hookform/resolvers/zod';
+import { useAuthStore } from '../hooks/useAuthStore';
+import { useNavigate } from 'react-router-dom';
 
 const schema = z.object({
   username: z.string().min(3, 'O nome de usuário deve ter pelo menos 3 caracteres'),
@@ -15,9 +17,19 @@ const LoginForm: React.FC = () => {
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = ({ username, email, password }: FieldValues) => {
-    console.log(username);
+  const authStore = useAuthStore();
+
+  const onSubmit = ({ username, password }: FieldValues) => {
+    authStore.login(username, password);
   };
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (authStore.isAuthenticated){
+      navigate("/")
+    }
+  }, [])
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} style={{width: "40vw", minHeight: '60px'}}>

@@ -1,9 +1,11 @@
 import * as PlanosServices from "../services/PlanosService"
 import { useEffect, useState } from "react";
 import { Plano } from "../objects/Planos";
+import useCarrinho from "../hooks/useCarrinho";
 
 const PricingPage = () => {
   const [planos, setPlanos] = useState<Plano[]>([]);
+  const carrinho = useCarrinho();
 
   useEffect(() => {
     PlanosServices.fetchPlanos().then((data) => {
@@ -12,7 +14,11 @@ const PricingPage = () => {
   }, []);
 
   if (planos.length == 0) return;
-  console.log(planos)
+  
+  const onContratar = (plano: Plano) => {
+    carrinho.adicionaNoCarrinho(plano.id);
+  }
+
   return (
     <>
     <h2 className="text-center mb-4 top-text">Nossos Planos</h2>
@@ -25,9 +31,9 @@ const PricingPage = () => {
                 <h5 className="card-title" style={{marginBottom: '4vh'}}>{plano.titulo}</h5>
                 <p className="card-text" style={{marginBottom: '5vh'}}>{plano.descricao}</p>
                 <h6 className="card-subtitle mb-2 text-muted">R${plano.preco}</h6>
-                <a href="#" className="btn btn-primary">
+                <button className="btn btn-primary" onClick={() => onContratar(plano)}>
                   Contratar
-                </a>
+                </button>
               </div>
             </div>
           </div>

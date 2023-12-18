@@ -1,13 +1,13 @@
 package com.musicas.musicasapi.Application.Entity.Pagamento;
 
-import com.musicas.musicasapi.Application.Entity.ProdutoBase;
+import com.musicas.musicasapi.Application.Entity.Produto;
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "Planos")
-public class Plano extends ProdutoBase {
+@DiscriminatorValue("plano")
+public class Plano extends Produto {
     private String titulo;
     private String descricao;
 }

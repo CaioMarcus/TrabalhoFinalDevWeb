@@ -1,5 +1,6 @@
 package com.musicas.musicasapi.Authentication.Controllers;
 
+import com.musicas.musicasapi.Application.Entity.Pagamento.Carrinho;
 import com.musicas.musicasapi.Authentication.Models.Entities.User;
 import com.musicas.musicasapi.Authentication.Models.Entities.UserRole;
 import com.musicas.musicasapi.Authentication.Models.LoginRequest;
@@ -46,6 +47,9 @@ public class AuthenticationController {
         newUser.setUsername(registerRequest.getUsername());
         newUser.setPassword(encryptedPassword);
         newUser.setRole(UserRole.valueOf(registerRequest.getRole()));
+
+        Carrinho carrinho = new Carrinho();
+        newUser.setCarrinho(carrinho);
 
         this.repository.save(newUser);
 

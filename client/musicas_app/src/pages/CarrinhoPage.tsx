@@ -1,8 +1,18 @@
-import { Link } from 'react-router-dom';
+import { useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom';
 import useCarrinho from '../hooks/useCarrinho';
+import { useAuthStore } from '../hooks/useAuthStore';
 
 const CarrinhoPage = () => {
   const carrinho = useCarrinho();
+  const authStore = useAuthStore();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!authStore.isAuthenticated){
+      navigate("/login")
+    }
+  }, [])
 
   const isCartEmpty = carrinho.itens.length === 0;
 
