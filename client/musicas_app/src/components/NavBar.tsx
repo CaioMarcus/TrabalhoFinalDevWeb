@@ -4,11 +4,12 @@ import carrinho from '/cart.png';
 import { useAuthStore } from '../hooks/useAuthStore';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCartShopping } from '@fortawesome/free-solid-svg-icons/faCartShopping';
+import useCarrinho from '../hooks/useCarrinho';
 
 const NavBar: React.FC = () => {
   const authStore = useAuthStore();
   const navigate = useNavigate();
-
+  const carrinho = useCarrinho();
   return (
     <>
 
@@ -25,9 +26,14 @@ const NavBar: React.FC = () => {
               <button className="nav-link" onClick={() => navigate("/planos")}>Planos</button>
             </li>
             {authStore.isAuthenticated ? (
-              <li className="nav-item">
-                <button className="nav-link" onClick={() => navigate("/musicas")}>Musicas</button>
-              </li>
+              <>
+                <li className="nav-item">
+                  <button className="nav-link" onClick={() => navigate("/musicas")}>Musicas</button>
+                </li>
+                <li className="nav-item">
+                  <button className="nav-link" onClick={() => navigate("/gerenciarMusicas")}>Gerenciar Musicas</button>
+                </li>
+              </>
             ) : (<></>)}
 
           </ul>
@@ -35,6 +41,9 @@ const NavBar: React.FC = () => {
 
         <button className="btn btn-light" onClick={() => navigate("/carrinho")}>
           <FontAwesomeIcon icon={faCartShopping} />
+          {carrinho.produtos.length > 0 && (
+            <span className="badge badge-danger" style={{color: "black"}} >{carrinho.totalProdutos}</span>
+          )}
         </button>
       </nav>
 

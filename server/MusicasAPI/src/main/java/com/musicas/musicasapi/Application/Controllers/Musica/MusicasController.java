@@ -35,6 +35,15 @@ public class MusicasController {
         return ResponseEntity.ok().body(musica);
     }
 
+    @GetMapping("musica")
+    public ResponseEntity<Musica> getMusica(
+            @RequestParam(name = "musicaId") Long musicaId
+    ){
+        Musica musica = musicasService.readMusicaById(musicaId);
+        if (musica == null) return ResponseEntity.badRequest().body(null);
+        return ResponseEntity.ok().body(musica);
+    }
+
     @GetMapping
     public ResponseEntity<List<Musica>> getMusicas(){
         List<Musica> musicas = musicasService.getAll();
@@ -64,7 +73,7 @@ public class MusicasController {
     }
 
     @PutMapping("atualizaMusica")
-    public ResponseEntity<Musica> updateMusica(Musica musicaNova){
+    public ResponseEntity<Musica> updateMusica(@RequestBody Musica musicaNova){
 
         Musica musicaCriada = null;
         try {
@@ -76,8 +85,8 @@ public class MusicasController {
         return ResponseEntity.ok().body(musicaCriada);
     }
 
-    @PutMapping("deletaMusica")
-    public ResponseEntity<String> deleteMusica(long musicaId){
+    @DeleteMapping("deletaMusica")
+    public ResponseEntity<String> deleteMusica(@RequestParam long musicaId){
         try {
             musicasService.deleteMusica(musicaId);
         } catch (MusicaNaoEncontradaException e) {

@@ -1,10 +1,11 @@
 package com.musicas.musicasapi.Application.Services.Musica;
 
 import com.musicas.musicasapi.Application.Controllers.RequestsWrapper.ResultadoPaginado;
-import com.musicas.musicasapi.Application.Entity.Produto;
+import com.musicas.musicasapi.Application.Entity.Pagamento.ProdutoCarrinho;
 import com.musicas.musicasapi.Application.Exceptions.MusicaNaoEncontradaException;
 import com.musicas.musicasapi.Application.Repository.Musica.MusicasRepository;
 import com.musicas.musicasapi.Application.Entity.Musica.Musica;
+import com.musicas.musicasapi.Application.Repository.Produto.ProdutoCarrinhoRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,11 +16,12 @@ import java.util.List;
 @Service
 public class MusicasService {
 
-
     private final MusicasRepository musicasRepository;
+    private final ProdutoCarrinhoRepository produtoCarrinhoRepository;
 
-    public MusicasService(MusicasRepository musicasRepository) {
+    public MusicasService(MusicasRepository musicasRepository, ProdutoCarrinhoRepository produtoCarrinhoRepository) {
         this.musicasRepository = musicasRepository;
+        this.produtoCarrinhoRepository = produtoCarrinhoRepository;
     }
 
     public Musica createMusica(Musica musica){
@@ -34,8 +36,12 @@ public class MusicasService {
         return musicasRepository.findAll();
     }
 
-    public Musica readMusicaById(long idMusica) throws MusicaNaoEncontradaException {
-        return musicasRepository.findById(idMusica).orElseThrow(() -> new MusicaNaoEncontradaException(idMusica));
+    public Musica readMusicaById(Long idMusica) {
+        try {
+            return musicasRepository.findById(idMusica).orElse(null);
+        } catch (Exception e){
+            return null;
+        }
     }
 
     public List<Musica> readMusicasMultiFilter(String nomeMusica, String nomeAlbum, String nomeArtista){
@@ -49,6 +55,9 @@ public class MusicasService {
     }
 
     public void deleteMusica(long idMusica) throws MusicaNaoEncontradaException {
+        List<ProdutoCarrinho> deleteProdutoCarrinho = produtoCarrinhoRepository.getProdutoCarrinhosByProdutoId(idMusica);
+        produtoCarrinhoRepository.deleteAll(deleteProdutoCarrinho);
+        produtoCarrinhoRepository.flush();
         readMusicaById(idMusica);
         musicasRepository.deleteById(idMusica);
     }

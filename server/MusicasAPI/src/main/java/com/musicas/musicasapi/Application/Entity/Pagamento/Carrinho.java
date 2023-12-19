@@ -27,15 +27,23 @@ public class Carrinho {
     private List<ProdutoCarrinho> produtos = new ArrayList<>();
 
     @NonNull
+    @ColumnDefault("0")
+    private int totalProdutos = 0;
+
+    @NonNull
     @ColumnDefault("0.0")
     private Double total = 0.0;
 
+    public Carrinho() {
+        atualizaValor();
+    }
 
     public void adicionaNoCarrinho(ProdutoCarrinho produtoCarrinho){
         if (this.produtos.contains(produtoCarrinho))
             produtoCarrinho.setQuantidade(produtoCarrinho.getQuantidade() + 1);
         else
             this.produtos.add(produtoCarrinho);
+        totalProdutos++;
         this.atualizaValor();
     }
 
@@ -54,8 +62,10 @@ public class Carrinho {
 
     private void atualizaValor(){
         this.total = 0.0;
+        this.totalProdutos = 0;
         for (ProdutoCarrinho produtoCarrinho : produtos){
             this.total += produtoCarrinho.getValor();
+            this.totalProdutos += produtoCarrinho.getQuantidade();
         }
     }
 }

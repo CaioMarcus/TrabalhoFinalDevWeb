@@ -4,6 +4,7 @@ import { adicionaNoCarrinho, fetchCarrinho, removeDoCarrinho, subtraiDoCarrinho 
 
 export type Carrinho = {
     produtos: ProdutoCarrinho[];
+    totalProdutos: number;
     total: number;
 }
 
@@ -17,6 +18,7 @@ export type CarrinhoActions = {
 export const useCarrinho = create<Carrinho & CarrinhoActions>((set) => ({
     produtos: [],
     total: 0,
+    totalProdutos: 0,
     adicionaNoCarrinho: async (produtoId: number) => {
         await adicionaItem(produtoId, set);
     },
@@ -39,6 +41,7 @@ const adicionaItem = async (produtoId: number, set: (state: Carrinho) => void) =
         if (data) {
             set({
                 produtos: data.produtos,
+                totalProdutos: data.totalProdutos,
                 total: data.total,
             });
         }
@@ -54,6 +57,7 @@ const subtraiItem = async (produtoId: number, set: (state: Carrinho) => void) =>
         if (data) {
             set({
                 produtos: data.produtos,
+                totalProdutos: data.totalProdutos,
                 total: data.total,
             });
         }
@@ -69,6 +73,7 @@ const removeItem = async (produtoId: number, set: (state: Carrinho) => void) => 
         if (data) {
             set({
                 produtos: data.produtos,
+                totalProdutos: data.totalProdutos,
                 total: data.total,
             });
         }
@@ -83,6 +88,7 @@ const atualizaCarrinho = async (set: (state: Carrinho) => void) => {
         if (data) {
             set({
                 produtos: data.produtos,
+                totalProdutos: data.totalProdutos,
                 total: data.total,
             });
         }

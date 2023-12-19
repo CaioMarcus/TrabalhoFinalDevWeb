@@ -1,14 +1,30 @@
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import Musica from '../objects/Musica';
 
 const BASE_URL = 'http://localhost:8080/api/musicas';
 const GET_MUSICAS_URL = BASE_URL;
+const GET_MUSICA_URL = BASE_URL + "/musica";
 const GET_MUSICAS_COM_FILTRO_URL = BASE_URL + '/filtro';
 const GET_MUSICAS_COM_PAGINACAO = BASE_URL + '/getComPaginacao';
 const GET_MUSICAS_COM_NOME_COM_PAGINACAO = BASE_URL + '/getPorNomeComPaginacao';
 const ADICIONA_MUSICA_URL = BASE_URL + '/adicionaMusica';
 const ATUALIZA_MUSICA_URL = BASE_URL + '/atualizaMusica';
 const DELETA_MUSICA_URL = BASE_URL + '/deletaMusica';
+
+export const fetchMusicaPorId = async (musicaId: string) => {
+  try {
+    const response = await axios.get<Musica>(GET_MUSICA_URL, {
+      params: {
+        "musicaId": musicaId
+      }
+    });
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching musicas:', error);
+    throw error;
+  }
+};
 
 export const fetchMusicas = async () => {
   try {
@@ -34,38 +50,29 @@ export const fetchMusicasComFiltro = async (filtro: string) => {
   }
 };
 
-export const fetchMusicasComPaginacao = async (pagina: number, tamanho: number) => {
-    const body = {
-        pagina: pagina,
-        tamanho: tamanho
-    }
-    
-    try {
-      const response = await axios.get<ResultadoPaginado<Musica>>(GET_MUSICAS_COM_PAGINACAO, {params : {...body}});
-      console.log(response.data);
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching musicas with filter:', error);
-      throw error;
-    }
-  };
+export const fetchMusicasComPaginacao = async (config: AxiosRequestConfig) => {
 
-  export const fetchMusicasPorNomeComPaginacao = async (nome:string, pagina: number, tamanho: number) => {
-    const body = {
-        nome: nome,
-        pagina: pagina,
-        tamanho: tamanho
-    }
-    
-    try {
-      const response = await axios.get<ResultadoPaginado<Musica>>(GET_MUSICAS_COM_NOME_COM_PAGINACAO, {params : {...body}});
-      console.log(response.data);
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching musicas with filter:', error);
-      throw error;
-    }
-  };
+  try {
+    const response = await axios.get<ResultadoPaginado<Musica>>(GET_MUSICAS_COM_PAGINACAO, config);
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching musicas with filter:', error);
+    throw error;
+  }
+};
+
+export const fetchMusicasPorNomeComPaginacao = async (config: AxiosRequestConfig) => {
+  try {
+    const response = await axios.get<ResultadoPaginado<Musica>>(GET_MUSICAS_COM_NOME_COM_PAGINACAO, config);
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching musicas with filter:', error);
+    throw error;
+  }
+};
+
 
 export const adicionaMusica = async (musica: Musica) => {
   try {
@@ -91,7 +98,11 @@ export const atualizaMusica = async (musica: Musica) => {
 
 export const deletaMusica = async (musicaId: number) => {
   try {
-    const response = await axios.delete<boolean>(`${DELETA_MUSICA_URL}/${musicaId}`);
+    const response = await axios.delete<boolean>(`${DELETA_MUSICA_URL}`, {
+      params: {
+        musicaId: musicaId
+      }
+    });
     console.log(response.data);
     return response.data;
   } catch (error) {
@@ -99,3 +110,4 @@ export const deletaMusica = async (musicaId: number) => {
     throw error;
   }
 };
+

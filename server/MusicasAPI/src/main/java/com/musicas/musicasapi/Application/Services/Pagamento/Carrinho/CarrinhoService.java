@@ -37,6 +37,7 @@ public class CarrinhoService {
             if (produtoCarrinho == null) {
                 // Criando Produto Carrinho
                 produtoCarrinho = new ProdutoCarrinho();
+                produtoCarrinho.setId(0L);
                 produtoCarrinho.setProduto(produto);
             }
             carrinho.adicionaNoCarrinho(produtoCarrinho);
@@ -76,6 +77,8 @@ public class CarrinhoService {
             //Verificar se o carrinho já possui o produto
             ProdutoCarrinho produtoCarrinhoExistente = carrinho.getProdutos().stream().filter(p -> Objects.equals(p.getProduto().getId(), produto.getId())).findFirst().orElse(null);
             if (produtoCarrinhoExistente == null) return null;
+
+            produtoCarrinhoExistente.setQuantidade(1);
 
             carrinho.removeDoCarrinho(produtoCarrinhoExistente);
             carrinhoRepository.save(carrinho);

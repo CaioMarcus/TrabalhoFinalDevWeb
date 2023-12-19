@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.List;
 
@@ -18,7 +20,8 @@ public class ProdutoCarrinho {
     @Setter
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "produto_id")
     private Produto produto;
 
     private int quantidade;
@@ -32,9 +35,9 @@ public class ProdutoCarrinho {
     }
 
     public void setQuantidade(int quantidade){
+        if (this.quantidade < 0) return;
         this.quantidade = quantidade;
         this.valor = this.quantidade * this.produto.getPreco();
-        if (this.quantidade < 0) this.quantidade = 0;
     }
 
 }

@@ -59,7 +59,13 @@ const CarrinhoPage = () => {
                         <FontAwesomeIcon icon={faArrowRight} />
                       </button>
                     </td>
-                    <td className='col-1 text-center'>{item.valor}</td>
+                    <td className='col-1 text-center'>
+                      {item.valor.toLocaleString("pt-BR", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                        useGrouping: true,
+                      })}
+                    </td>
                     <td className='col-1 text-center'>
                       <button className="btn btn-danger" onClick={() => carrinho.removeDoCarrinho(item.produto.id)}>
                         <FontAwesomeIcon icon={faTrash} />
@@ -73,7 +79,13 @@ const CarrinhoPage = () => {
                   <th className='col-1'></th>
                   <th className='col-7'></th>
                   <th className='col-2 text-center'>Total:</th>
-                  <th className='col-1 text-center'>{carrinho.total}</th>
+                  <th className='col-1 text-center'>
+                    {carrinho.total.toLocaleString("pt-BR", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                      useGrouping: true,
+                    })}
+                  </th>
                   <th className='col-1'></th>
                 </tr>
               </tfoot>
