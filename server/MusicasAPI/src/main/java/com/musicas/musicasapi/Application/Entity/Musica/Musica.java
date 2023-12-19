@@ -10,11 +10,10 @@ import java.util.List;
 @Entity
 @DiscriminatorValue("musica")
 public class Musica extends Produto {
-    private Float duracao;
-    @ManyToOne
-    private Album album;
-
-    @ManyToMany(mappedBy = "musicas", cascade = CascadeType.ALL)
-    private List<Artista> artistas;
+    private String duracao;
+    private String album;
+    private String artista;
+    @Lob
+    private byte[] capa;
 }
 

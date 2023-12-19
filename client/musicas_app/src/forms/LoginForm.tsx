@@ -16,20 +16,24 @@ const LoginForm: React.FC = () => {
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
-
   const authStore = useAuthStore();
-
-  const onSubmit = ({ username, password }: FieldValues) => {
-    authStore.login(username, password);
-  };
-
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log(authStore)
     if (authStore.isAuthenticated){
       navigate("/")
     }
   }, [])
+  
+  const onSubmit = ({ username, password }: FieldValues) => {
+    try {
+      authStore.login(username, password);
+      navigate("/")
+    } catch(e){
+      alert("Falha No Login")
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} style={{width: "40vw", minHeight: '60px'}}>

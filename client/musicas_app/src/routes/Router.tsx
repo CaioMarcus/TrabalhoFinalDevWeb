@@ -4,6 +4,8 @@ import LoginPage from '../pages/LoginPage';
 import Layout from './Layout';
 import PricingPage from '../pages/PlanosPage';
 import CarrinhoPage from '../pages/CarrinhoPage';
+import PrivateRoutes from './PrivateRoutes';
+import MusicasPage from '../pages/MusicasPage';
 
 const router = createBrowserRouter([
     {
@@ -12,9 +14,16 @@ const router = createBrowserRouter([
         children: [
             { path: "", element: <HomePage /> },
             { path: "login", element: <LoginPage /> },
-            { path: "pricing", element: <PricingPage/>},
+            { path: "planos", element: <PricingPage/>},
             { path: "carrinho", element: <CarrinhoPage/>}
-        ]
+        ] 
     },
+    {
+        path: "/",
+        element: <PrivateRoutes />,
+        children: [
+            {path: "musicas", element: <MusicasPage /> }
+        ]
+    }
 ]);
 export default router;

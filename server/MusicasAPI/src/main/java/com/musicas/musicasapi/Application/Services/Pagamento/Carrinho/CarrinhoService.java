@@ -8,7 +8,6 @@ import com.musicas.musicasapi.Application.Repository.ProdutoRepository;
 import com.musicas.musicasapi.Authentication.Repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -24,58 +23,65 @@ public class CarrinhoService {
         this.produtoRepository = produtoRepository;
     }
 
-    public boolean adicionaProduto(Long userId, Long idProduto){
+    public Carrinho adicionaProduto(Long userId, Long idProduto){
         try {
             Carrinho carrinho = getCarrinho(userId);
-            if (carrinho == null) return false;
+            if (carrinho == null) return null;
             Produto produto = produtoRepository.findProdutoById(idProduto);
-            if (produto == null) return false;
+            if (produto == null) return null;
 
             //Verificar se o carrinho já possui o produto
-            ProdutoCarrinho produtoCarrinhoExistente = carrinho.getProdutos().stream().filter(p -> Objects.equals(p.getProduto().getId(), produto.getId())).findFirst().orElse(null);
+            ProdutoCarrinho produtoCarrinho = carrinho.getProdutos().stream().filter(p -> Objects.equals(p.getProduto().getId(), produto.getId())).findFirst().orElse(null);
+            //Se existe, somente atualizar o valor
 
-            if (produtoCarrinhoExistente != null){
-                produtoCarrinhoExistente.setQuantidade(produtoCarrinhoExistente.getQuantidade() + 1);
-                carrinho.atualizaValor();
-                carrinhoRepository.save(carrinho);
-                return true;
+            if (produtoCarrinho == null) {
+                // Criando Produto Carrinho
+                produtoCarrinho = new ProdutoCarrinho();
+                produtoCarrinho.setProduto(produto);
             }
-
-            // Criando Produto Carrinho
-            ProdutoCarrinho produtoCarrinho = new ProdutoCarrinho();
-            produtoCarrinho.setProduto(produto);
-
             carrinho.adicionaNoCarrinho(produtoCarrinho);
-            carrinho.atualizaValor();
             carrinhoRepository.save(carrinho);
+            return carrinho;
         } catch (Exception e) {
-            return false;
+            return null;
         }
-        return true;
     }
 
-    public boolean removeProduto(Long userId, Long idProduto){
+    public Carrinho subtraiProduto(Long userId, Long idProduto){
         try {
             Carrinho carrinho = getCarrinho(userId);
-            if (carrinho == null) return false;
+            if (carrinho == null) return null;
             Produto produto = produtoRepository.findProdutoById(idProduto);
-            if (produto == null) return false;
+            if (produto == null) return null;
 
             //Verificar se o carrinho já possui o produto
             ProdutoCarrinho produtoCarrinhoExistente = carrinho.getProdutos().stream().filter(p -> Objects.equals(p.getProduto().getId(), produto.getId())).findFirst().orElse(null);
-            if (produtoCarrinhoExistente == null) return false;
+            if (produtoCarrinhoExistente == null) return null;
 
-            produtoCarrinhoExistente.setQuantidade(produtoCarrinhoExistente.getQuantidade() - 1);
-
-            //Remover Produto
-            if (produtoCarrinhoExistente.getQuantidade() == 0) {
-                carrinho.removeDoCarrinho(produtoCarrinhoExistente);
-            }
-            carrinho.atualizaValor();
+            carrinho.subtraiDoCarrinho(produtoCarrinhoExistente);
             carrinhoRepository.save(carrinho);
-            return true;
+            return carrinho;
         } catch (Exception e){
-            return false;
+            return null;
+        }
+    }
+
+    public Carrinho removeProduto(Long userId, Long idProduto){
+        try {
+            Carrinho carrinho = getCarrinho(userId);
+            if (carrinho == null) return null;
+            Produto produto = produtoRepository.findProdutoById(idProduto);
+            if (produto == null) return null;
+
+            //Verificar se o carrinho já possui o produto
+            ProdutoCarrinho produtoCarrinhoExistente = carrinho.getProdutos().stream().filter(p -> Objects.equals(p.getProduto().getId(), produto.getId())).findFirst().orElse(null);
+            if (produtoCarrinhoExistente == null) return null;
+
+            carrinho.removeDoCarrinho(produtoCarrinhoExistente);
+            carrinhoRepository.save(carrinho);
+            return carrinho;
+        } catch (Exception e){
+            return null;
         }
     }
 

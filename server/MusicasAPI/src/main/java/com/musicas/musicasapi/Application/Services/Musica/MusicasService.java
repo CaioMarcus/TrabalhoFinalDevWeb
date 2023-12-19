@@ -1,8 +1,13 @@
 package com.musicas.musicasapi.Application.Services.Musica;
 
+import com.musicas.musicasapi.Application.Controllers.RequestsWrapper.ResultadoPaginado;
+import com.musicas.musicasapi.Application.Entity.Produto;
 import com.musicas.musicasapi.Application.Exceptions.MusicaNaoEncontradaException;
 import com.musicas.musicasapi.Application.Repository.Musica.MusicasRepository;
 import com.musicas.musicasapi.Application.Entity.Musica.Musica;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,9 +25,13 @@ public class MusicasService {
     public Musica createMusica(Musica musica){
         if (musica == null) return null;
         if (musica.getAlbum() == null) return null;
-        if (musica.getArtistas() == null || musica.getArtistas().size() == 0) return null;
+        if (musica.getArtista() == null) return null;
 
         return musicasRepository.save(musica);
+    }
+
+    public List<Musica> getAll(){
+        return musicasRepository.findAll();
     }
 
     public Musica readMusicaById(long idMusica) throws MusicaNaoEncontradaException {
@@ -42,6 +51,30 @@ public class MusicasService {
     public void deleteMusica(long idMusica) throws MusicaNaoEncontradaException {
         readMusicaById(idMusica);
         musicasRepository.deleteById(idMusica);
+    }
+
+    public ResultadoPaginado<Musica> getMusicasByNamePaginadas(String nome, int pagina, int tamanho){
+        Pageable pageable = PageRequest.of(pagina, tamanho);
+
+        Page<Musica> paginaDeMusicas = musicasRepository.findMusicaByNameComPaginacao(nome, pageable);
+
+        return new ResultadoPaginado<>(
+                paginaDeMusicas.getTotalElements(),
+                paginaDeMusicas.getTotalPages(),
+                paginaDeMusicas.getNumber(),
+                paginaDeMusicas.getContent());
+    }
+
+    public ResultadoPaginado<Musica> getMusicasPaginadas(int pagina, int tamanho){
+        Pageable pageable = PageRequest.of(pagina, tamanho);
+
+        Page<Musica> paginaDeMusicas = musicasRepository.findMusicaComPaginacao(pageable);
+
+        return new ResultadoPaginado<>(
+                paginaDeMusicas.getTotalElements(),
+                paginaDeMusicas.getTotalPages(),
+                paginaDeMusicas.getNumber(),
+                paginaDeMusicas.getContent());
     }
 
 }

@@ -1,17 +1,18 @@
 package com.musicas.musicasapi.Application.Controllers.Musica;
 
+import com.musicas.musicasapi.Application.Controllers.RequestsWrapper.InformacaoPaginacaoMusica;
+import com.musicas.musicasapi.Application.Controllers.RequestsWrapper.ResultadoPaginado;
 import com.musicas.musicasapi.Application.Exceptions.MusicaNaoEncontradaException;
 import com.musicas.musicasapi.Application.Entity.Musica.Musica;
 import com.musicas.musicasapi.Application.Services.Musica.MusicasService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Controller
-@RequestMapping("/Musicas")
+@RequestMapping("/api/musicas")
 @CrossOrigin
 public class MusicasController {
     private final MusicasService musicasService;
@@ -20,18 +21,49 @@ public class MusicasController {
         this.musicasService = musicasService;
     }
 
-    public ResponseEntity<Musica> addMusica(Musica musica){
+    @PostMapping("adicionaMusica")
+    public ResponseEntity<Musica> addMusica(@RequestBody Musica musica){
         Musica musicaCriada = musicasService.createMusica(musica);
         if (musicaCriada == null) return ResponseEntity.badRequest().body(null);
         return ResponseEntity.ok().body(musicaCriada);
     }
 
-    public ResponseEntity<List<Musica>> getMusicas(String nomeMusica, String nomeArtista, String nomeAlbum){
+    @GetMapping("filtro")
+    public ResponseEntity<List<Musica>> getMusicas(@RequestBody String nomeMusica, @RequestBody String nomeArtista, @RequestBody String nomeAlbum){
         List<Musica> musica = musicasService.readMusicasMultiFilter(nomeMusica, nomeAlbum, nomeArtista);
         if (musica == null || musica.isEmpty()) return ResponseEntity.badRequest().body(null);
         return ResponseEntity.ok().body(musica);
     }
 
+    @GetMapping
+    public ResponseEntity<List<Musica>> getMusicas(){
+        List<Musica> musicas = musicasService.getAll();
+        if (musicas == null || musicas.isEmpty()) return ResponseEntity.badRequest().body(null);
+        return ResponseEntity.ok().body(musicas);
+    }
+
+    @GetMapping("getPorNomeComPaginacao")
+    public ResponseEntity<ResultadoPaginado<Musica>> getMusicasComNomeComPaginacao(
+            @RequestParam("nome") String nome,
+            @RequestParam("pagina") int pagina,
+            @RequestParam("tamanho") int tamanho
+    ){
+        ResultadoPaginado<Musica> musicas = musicasService.getMusicasByNamePaginadas(nome, pagina, tamanho);
+        if (musicas == null) return ResponseEntity.badRequest().body(null);
+        return ResponseEntity.ok(musicas);
+    }
+
+    @GetMapping("getComPaginacao")
+    public ResponseEntity<ResultadoPaginado<Musica>> getMusicasComPaginacao(
+            @RequestParam("pagina") int pagina,
+            @RequestParam("tamanho") int tamanho
+    ){
+        ResultadoPaginado<Musica> musicas = musicasService.getMusicasPaginadas(pagina, tamanho);
+        if (musicas == null) return ResponseEntity.badRequest().body(null);
+        return ResponseEntity.ok(musicas);
+    }
+
+    @PutMapping("atualizaMusica")
     public ResponseEntity<Musica> updateMusica(Musica musicaNova){
 
         Musica musicaCriada = null;
@@ -44,6 +76,7 @@ public class MusicasController {
         return ResponseEntity.ok().body(musicaCriada);
     }
 
+    @PutMapping("deletaMusica")
     public ResponseEntity<String> deleteMusica(long musicaId){
         try {
             musicasService.deleteMusica(musicaId);

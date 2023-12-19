@@ -8,6 +8,5 @@ import lombok.Data;
 @Entity
 @DiscriminatorValue("plano")
 public class Plano extends Produto {
-    private String titulo;
     private String descricao;
 }

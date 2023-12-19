@@ -2,9 +2,6 @@ package com.musicas.musicasapi.Application.Controllers.Pagamento;
 
 import com.musicas.musicasapi.Application.Controllers.RequestsWrapper.AdicionaProdutoNoCarrinhoRequest;
 import com.musicas.musicasapi.Application.Entity.Pagamento.Carrinho;
-import com.musicas.musicasapi.Application.Entity.Pagamento.Plano;
-import com.musicas.musicasapi.Application.Entity.Pagamento.ProdutoCarrinho;
-import com.musicas.musicasapi.Application.Entity.Produto;
 import com.musicas.musicasapi.Application.Services.Pagamento.Carrinho.CarrinhoService;
 import com.musicas.musicasapi.Authentication.Models.Entities.User;
 import org.springframework.http.HttpStatus;
@@ -12,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,15 +23,39 @@ public class CarrinhoController {
     }
 
     @PostMapping("/adicionaProduto")
-    public ResponseEntity<String> adicionaProdutoNoCarrinho(@RequestBody AdicionaProdutoNoCarrinhoRequest adicionaProdutoNoCarrinhoRequest) {
+    public ResponseEntity<Carrinho> adicionaProdutoNoCarrinho(@RequestBody AdicionaProdutoNoCarrinhoRequest adicionaProdutoNoCarrinhoRequest) {
         try {
             Long UserId = getUserId();
-            boolean adicionou = carrinhoService.adicionaProduto(UserId, adicionaProdutoNoCarrinhoRequest.getProdutoId());
-            if (adicionou) return new ResponseEntity<>(HttpStatus.OK);
+            Carrinho carrinhoNovo = carrinhoService.adicionaProduto(UserId, adicionaProdutoNoCarrinhoRequest.getProdutoId());
+            if (carrinhoNovo == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.ok(carrinhoNovo);
         } catch (Exception e){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @PostMapping("/subtraiProduto")
+    public ResponseEntity<Carrinho> subtraiProdutoDoCarrinho(@RequestBody AdicionaProdutoNoCarrinhoRequest adicionaProdutoNoCarrinhoRequest) {
+        try {
+            Long UserId = getUserId();
+            Carrinho carrinhoNovo = carrinhoService.subtraiProduto(UserId, adicionaProdutoNoCarrinhoRequest.getProdutoId());
+            if (carrinhoNovo == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.ok(carrinhoNovo);
+        } catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/removeProduto")
+    public ResponseEntity<Carrinho> removeProdutoDoCarrinho(@RequestBody AdicionaProdutoNoCarrinhoRequest adicionaProdutoNoCarrinhoRequest) {
+        try {
+            Long UserId = getUserId();
+            Carrinho carrinhoNovo = carrinhoService.removeProduto(UserId, adicionaProdutoNoCarrinhoRequest.getProdutoId());
+            if (carrinhoNovo == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.ok(carrinhoNovo);
+        } catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping

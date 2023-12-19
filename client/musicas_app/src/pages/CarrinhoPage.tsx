@@ -2,6 +2,10 @@ import { useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import useCarrinho from '../hooks/useCarrinho';
 import { useAuthStore } from '../hooks/useAuthStore';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons/faArrowRight';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons/faArrowLeft';
 
 const CarrinhoPage = () => {
   const carrinho = useCarrinho();
@@ -9,13 +13,17 @@ const CarrinhoPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!authStore.isAuthenticated){
+    if (!authStore.isAuthenticated) {
       navigate("/login")
     }
   }, [])
 
-  const isCartEmpty = carrinho.itens.length === 0;
+  useEffect(() => {
+    console.log(carrinho)
+  }, [carrinho])
 
+  console.log(carrinho)
+  const isCartEmpty = carrinho.produtos.length === 0;
   return (
     <div className="container mt-5">
       <h2 className="mb-4 top-text">Seu Carrinho</h2>
@@ -23,26 +31,56 @@ const CarrinhoPage = () => {
         <p>Seu carrinho está vazio.</p>
       ) : (
         <>
-          <table className="table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                {/* Add other headers based on your ItemCarrinho structure */}
-              </tr>
-            </thead>
-            <tbody>
-              {carrinho.itens.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.nome}</td>
-                  <td>{item.quantidade}</td>
-                  <td>{item.valor}</td>
+          <div className='container-fluid'>
+            <table className="table table-striped table-bordered">
+              <thead>
+                <tr className='d-flex'>
+                  <th className='col-1'>#</th>
+                  <th className='col-7'>Nome</th>
+                  <th className='col-2 text-center'>Quantia</th>
+                  <th className='col-1 text-center'>Valor</th>
+                  <th className='col-1'></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {carrinho.produtos.map((item, index) => (
+                  <tr key={item.id} className='d-flex'>
+                    <td className='col-1'>{index}</td>
+                    <td className='col-7'>{item.produto.nome}</td>
+                    <td className='col-2 text-center'>
+                      <button
+                        className={`btn ${item.quantidade <= 1 ? 'invisible' : ''}`}
+                        onClick={() => carrinho.subtraiDoCarrinho(item.produto.id)}
+                      >
+                        <FontAwesomeIcon icon={faArrowLeft} />
+                      </button>
+                      {item.quantidade}
+                      <button className="btn" onClick={() => carrinho.adicionaNoCarrinho(item.produto.id)}>
+                        <FontAwesomeIcon icon={faArrowRight} />
+                      </button>
+                    </td>
+                    <td className='col-1 text-center'>{item.valor}</td>
+                    <td className='col-1 text-center'>
+                      <button className="btn btn-danger" onClick={() => carrinho.removeDoCarrinho(item.produto.id)}>
+                        <FontAwesomeIcon icon={faTrash} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot>
+                <tr className='d-flex'>
+                  <th className='col-1'></th>
+                  <th className='col-7'></th>
+                  <th className='col-2 text-center'>Total:</th>
+                  <th className='col-1 text-center'>{carrinho.total}</th>
+                  <th className='col-1'></th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
           <div className="mt-3">
-            <p>Valor Total: R$ {carrinho.valorTotal.toFixed(2)}</p>
-            <Link to="/checkout" className={`btn btn-primary ${isCartEmpty ? 'disabled' : ''}`}>
+            <Link to="/checkout" className={`btn btn-success ${isCartEmpty ? 'disabled' : ''}`}>
               Ir para o Checkout
             </Link>
           </div>

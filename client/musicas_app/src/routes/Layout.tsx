@@ -2,14 +2,22 @@ import { Outlet } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import { useAuthStore } from "../hooks/useAuthStore";
 import { useEffect } from "react";
+import useCarrinho from "../hooks/useCarrinho";
 
 function Layout() {
-  const checkAndAuthenticate = useAuthStore((state) => state.checkAndAuthenticate);
+  const authStore = useAuthStore();
+  const carrinho = useCarrinho();
 
   useEffect(() => {
-    console.log("Checking Authentication")
-    checkAndAuthenticate();
+    authStore.checkAndAuthenticate();
+    console.log(authStore)
   }, []);
+
+  
+  useEffect(() => {
+    if (!authStore.isAuthenticated) return;
+    carrinho.atualizaCarrinho();
+  }, [authStore.isAuthenticated])
 
   return (
     <>

@@ -22,7 +22,7 @@ public class PlanosService {
     }
 
     public List<Plano> getAllPlanos() {
-        return planosRepository.findAll();
+        return planosRepository.getAllPlanos();
     }
 
     public Optional<Plano> getPlanoById(Long id) {
